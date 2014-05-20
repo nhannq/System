@@ -70,11 +70,11 @@ public class CassandraKeytoNode {
             	nodes.add(new ArrayList<Integer>());
             }
 
-            List<Row> lSt = rS.all();
+            List<Row> keyList = rS.all();
             
             //get keys from Cassandra and check which token range they belong to 
             for (int i = 0; i < nbKeys; i++) {
-                Row a = lSt.get(i);
+                Row a = keyList.get(i);
     //            System.out.print(a.getInt("k") + " : ");
     //            System.out.println(a.getLong("token(k)"));
                 Long hashedValue = a.getLong("token(k)");
