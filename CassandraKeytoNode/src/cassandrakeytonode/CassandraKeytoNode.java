@@ -64,13 +64,13 @@ public class CassandraKeytoNode {
             	System.out.println(initialTokens.get(i));
             }
             
-            ResultSet rS = session.execute("select token(k), k from t2;");
+            ResultSet resultSet = session.execute("select token(k), k from t2;");
             List<List<Integer>> nodes = new ArrayList<List<Integer>>();
             for (int i = 0; i < nbNodes; i++) {
             	nodes.add(new ArrayList<Integer>());
             }
 
-            List<Row> keyList = rS.all();
+            List<Row> keyList = resultSet.all();
             
             //get keys from Cassandra and check which token range they belong to 
             for (int i = 0; i < nbKeys; i++) {
