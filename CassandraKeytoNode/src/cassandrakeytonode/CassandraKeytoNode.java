@@ -31,15 +31,9 @@ public class CassandraKeytoNode {
     private Session session;
 
     public void connect(String node) {
-        cluster = Cluster.builder()
-                .addContactPoint(node).build();
+        cluster = Cluster.builder().addContactPoint(node).build();
         Metadata metadata = cluster.getMetadata();
-        System.out.printf("Connected to cluster: %s\n",
-                metadata.getClusterName());
-        for (Host host : metadata.getAllHosts()) {
-            System.out.printf("Datacenter: %s; Host: %s; Rack: %s\n",
-                    host.getDatacenter(), host.getAddress(), host.getRack());
-        }
+        System.out.printf("Connected to cluster: %s\n", metadata.getClusterName());
     }
 
     public void getHashValues() {
