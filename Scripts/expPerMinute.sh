@@ -4,7 +4,7 @@
 server="m7"
 server2="m11"
 server3="m12"
-folder="smaifi7_3"
+folder="sm7_3"
 cassandraFolder="/home/nq/setup/sparkcass/apache-cassandra-2.0.7"
 experimentTime=3
 ssh $server "cd $cassandraFolder/conf; cp metrics-reporter-config-sample.yaml metrics-reporter-config.yaml"
@@ -121,11 +121,11 @@ for sp1 in 14000 16000 18000 20000 22000  #12000 #14000 16000 18000 20000 #12000
       ssh $server2 "cd $cassandraFolder; cp logCPURAM.out logCPURAM/logCPURAM$sp1-$sp2-$count-$server2.out"
       ssh $server3 "cd $cassandraFolder; cp logCPURAM.out logCPURAM/logCPURAM$sp1-$sp2-$count-$server3.out"
       
-#      echo "- call command to run checking program from maifi3"
+#      echo "- call command to run checking program from m3"
 #      ./check.sh
 #      echo "start sleeping 60s" 
 #      sleep 60
-#      echo "end sleeping 60s - call command to check dropped rate of all clients on maifi3"
+#      echo "end sleeping 60s - call command to check dropped rate of all clients on m3"
 #      for host in $(cat hosts.txt);
 #      	do
 #        	echo "start sleeping 10s"
@@ -187,11 +187,11 @@ for sp1 in 14000 16000 18000 20000 22000  #12000 #14000 16000 18000 20000 #12000
       echo "start sleeping 120s"
       sleep 120
 
-      echo "- call command to run checking program from maifi3"
+      echo "- call command to run checking program from m3"
       ./check.sh
       echo "start sleeping 60s" 
       sleep 60
-      echo "end sleeping 60s - call command to check dropped rate of all clients on maifi3"
+      echo "end sleeping 60s - call command to check dropped rate of all clients on m3"
       for host in $(cat hosts.txt);
         do
                 echo "start sleeping 10s"
