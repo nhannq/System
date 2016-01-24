@@ -10,7 +10,7 @@ WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
 USE mykeyspace;
 
 CREATE TABLE t2 (
-  t int PRIMARY KEY,
+  k int PRIMARY KEY,
   other int
 );
 

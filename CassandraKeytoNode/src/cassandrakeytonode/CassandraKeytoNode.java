@@ -26,6 +26,7 @@ public class CassandraKeytoNode {
 
     /**
      * @param args the command line arguments
+     * https://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configGenTokens_c.html?scroll=concept_ds_rns_mt1_gk__calc-tokens-1.2
      */
     private Cluster cluster;
     private Session session;
@@ -350,24 +351,23 @@ public class CassandraKeytoNode {
                 fw.write(nodes.get(0).get(i) + ",");
             }
             fw.write(nodes.get(0).get(999));
-            fw.close();
             System.out.println("Done");
         } catch (IOException ex) {
             Logger.getLogger(CassandraKeytoNode.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         } finally {
-            try {
-                fw.close();
-            } catch (IOException ex) {
-                Logger.getLogger(CassandraKeytoNode.class.getName()).log(Level.SEVERE, null, ex);
-            }
+//            try {
+//                fw.close();
+//            } catch (IOException ex) {
+//                Logger.getLogger(CassandraKeytoNode.class.getName()).log(Level.SEVERE, null, ex);
+//            }
         }
     }
 
     public static void main(String[] args) {
         // TODO code application logic here
         CassandraKeytoNode cassandraKey2Node = new CassandraKeytoNode();
-        cassandraKey2Node.connect("localhost");
+        cassandraKey2Node.connect("137.99.15.164");
         cassandraKey2Node.getHashValues();
     }
 }
