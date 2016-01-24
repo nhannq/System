@@ -66,7 +66,7 @@ public class CassPerfRunner {
         System.out.println("rate " + rate);
         System.out.println("delayTime " + delayTime);
         System.out.println("lcheck " + lcheckfile);
-        cD.checkDatafromCassandraHectorPerSecond(id, noOfReplica, minute, lcheckfile, rate, delayTime,
+        cD.checkDatafromCassandraHector(id, noOfReplica, minute, lcheckfile, rate, delayTime,
             logFileName);
       }
     } else if (driver == 1) { // use Datastax library
