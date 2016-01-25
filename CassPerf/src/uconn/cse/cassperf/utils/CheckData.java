@@ -36,6 +36,7 @@ public class CheckData {
     minute += delayTime;
     int second = minute * 60;
     int nbDroppedMessages = 0;
+    int nbPutMessages = 0;
 
     try {
       uconn.cse.cassperf.hectorcassandraclient.GetDataFromDataCF iGFCF =
@@ -64,37 +65,50 @@ public class CheckData {
       String[] parsedStartTime = startTime.split("\\s+");
       System.out.println("Time client called server :" + parsedStartTime[0]);
       System.out.println("Time client called server :" + parsedStartTime[1]);
-      QueryResult<ColumnSlice<Integer, Double>> result0 =
-          iGFCF.execute("Data", uID, 0, 10, false, 1);
+      QueryResult<ColumnSlice<Integer, Double>> result0;      
       // get the first column to get the 1st time stamp when Cassandra saves the data
       ColumnSlice<Integer, Double> colslice0;
       List<HColumn<Integer, Double>> dataColumns;
+      int nbReadMessages = rate;
+      int count = 0;
+      int nbRuns = noOfSamples/nbReadMessages + 1;
       while (tsID < noOfSamples - rate + 1) {
-        // System.out.println("tsID " + tsID);
-        result0 = iGFCF.execute("Data", uID, tsID, tsID + rate - 1, false, rate);
+         
+        result0 = iGFCF.execute("Data", uID, tsID, tsID + nbReadMessages - 1, false, nbReadMessages);
         // get data from raw data table
         colslice0 = result0.get();
         dataColumns = colslice0.getColumns();
-        if (dataColumns.size() > 0) {
-          for (int columnIdx = 0; columnIdx < rate - 1; columnIdx++) {
-             if (dataColumns.get(columnIdx).getValue() != dataColumns.get(columnIdx+1).getValue()-1)
-               nbDroppedMessages++;
-          }
-        }
-        tsID += rate;
+        System.out.println("tsID " + tsID + " size " + dataColumns.size());
+        nbPutMessages += dataColumns.size();
+//        if (dataColumns.size() > 0) {
+//          for (int columnIdx = 0; columnIdx < dataColumns.size() - 1; columnIdx++) {
+//             if (dataColumns.get(columnIdx).getValue() != dataColumns.get(columnIdx+1).getValue()-1)
+//               nbDroppedMessages++;
+//          }
+//        }
+        tsID += nbReadMessages;
+        count++;
+        
+        if (count > nbRuns)
+          break;
       }
+      nbDroppedMessages = noOfSamples - nbPutMessages;
 
       System.out.println("Finish checking: " + uID + " size " + nbDroppedMessages + " / " + noOfSamples + " : "
           + (nbDroppedMessages / noOfSamples));
       System.out.println("rate:\t" + rate);
+      System.out.println("put:\t" + nbPutMessages);
       System.out.println("drop:\t" + nbDroppedMessages);
       System.out.println("ratio:\t" + nbDroppedMessages / noOfSamples);
+      System.out.println("Runtime:\t" + (System.currentTimeMillis() - sysStartTime)/1000);
     } catch (Exception e) {// Catch exception if any
-      System.out.println("Finish checking: " + uID + " size " + nbDroppedMessages + " / " + noOfSamples + " : "
+      System.out.println("Exception Finish checking: " + uID + " size " + nbDroppedMessages + " / " + noOfSamples + " : "
           + (nbDroppedMessages / noOfSamples));
       System.out.println("rate:\t" + rate);
+      System.out.println("put:\t" + nbPutMessages);
       System.out.println("drop:\t" + nbDroppedMessages);
       System.out.println("ratio:\t" + nbDroppedMessages / noOfSamples);
+      System.out.println("Runtime:\t" + (System.currentTimeMillis() - sysStartTime)/1000);
       e.printStackTrace();
     }
   }
