@@ -3,20 +3,20 @@
  */
 package uconn.cse.cassperf.utils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.Arrays;
-import java.util.List;
-
 import com.datastax.driver.core.ResultSet;
 import com.netflix.astyanax.model.ColumnList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import me.prettyprint.hector.api.beans.ColumnSlice;
 import me.prettyprint.hector.api.beans.HColumn;
 import me.prettyprint.hector.api.query.QueryResult;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 
@@ -26,15 +26,13 @@ public class CheckData {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
+  // to measure Cassandra replicating performance
   public void checkDatafromCassandraHector(int uID, int noOfReplicas, int minute,
-      String lcheckfile, int rate, int delayTime, String logFileName) { // to measure Cassandra
-    // replicating
-    // performance
+      String lcheckfile, int rate, int delayTime, String logFileName) {
     long sysStartTime = System.currentTimeMillis();
     int noOfSamples = minute * rate * 60;
     System.out.println("noOfSamples " + noOfSamples);
     minute += delayTime;
-    int second = minute * 60;
     int nbDroppedMessages = 0;
     int nbPutMessages = 0;
 
@@ -47,17 +45,14 @@ public class CheckData {
       // data to the backend
       BufferedReader br = new BufferedReader(new FileReader(logFileName));
       try {
-        StringBuilder sb = new StringBuilder();
         String line = br.readLine();
 
         while (line != null) {
           if (line.contains("startTime")) {
             startTime = line.split("-")[1];
           }
-
           line = br.readLine();
         }
-        String everything = sb.toString();
       } finally {
         br.close();
       }
@@ -65,59 +60,52 @@ public class CheckData {
       String[] parsedStartTime = startTime.split("\\s+");
       System.out.println("Time client called server :" + parsedStartTime[0]);
       System.out.println("Time client called server :" + parsedStartTime[1]);
-      QueryResult<ColumnSlice<Integer, Double>> result0;      
+      QueryResult<ColumnSlice<Integer, Double>> result0;
       // get the first column to get the 1st time stamp when Cassandra saves the data
       ColumnSlice<Integer, Double> colslice0;
       List<HColumn<Integer, Double>> dataColumns;
       int nbReadMessages = rate;
       int count = 0;
-      int nbRuns = noOfSamples/nbReadMessages + 1;
+      int nbRuns = noOfSamples / nbReadMessages + 1;
       while (tsID < noOfSamples - rate + 1) {
-         
-        result0 = iGFCF.execute("Data", uID, tsID, tsID + nbReadMessages - 1, false, nbReadMessages);
+
+        result0 =
+            iGFCF.execute("Data", uID, tsID, tsID + nbReadMessages - 1, false, nbReadMessages);
         // get data from raw data table
         colslice0 = result0.get();
         dataColumns = colslice0.getColumns();
         System.out.println("tsID " + tsID + " size " + dataColumns.size());
         nbPutMessages += dataColumns.size();
-//        if (dataColumns.size() > 0) {
-//          for (int columnIdx = 0; columnIdx < dataColumns.size() - 1; columnIdx++) {
-//             if (dataColumns.get(columnIdx).getValue() != dataColumns.get(columnIdx+1).getValue()-1)
-//               nbDroppedMessages++;
-//          }
-//        }
         tsID += nbReadMessages;
         count++;
-        
+
         if (count > nbRuns)
           break;
       }
       nbDroppedMessages = noOfSamples - nbPutMessages;
 
-      System.out.println("Finish checking: " + uID + " size " + nbDroppedMessages + " / " + noOfSamples + " : "
-          + (nbDroppedMessages / noOfSamples));
+      System.out.println("Finish checking: " + uID + " size " + nbDroppedMessages + " / "
+          + noOfSamples + " : " + (nbDroppedMessages / noOfSamples));
       System.out.println("rate:\t" + rate);
       System.out.println("put:\t" + nbPutMessages);
       System.out.println("drop:\t" + nbDroppedMessages);
       System.out.println("ratio:\t" + nbDroppedMessages / noOfSamples);
-      System.out.println("Runtime:\t" + (System.currentTimeMillis() - sysStartTime)/1000);
+      System.out.println("Runtime:\t" + (System.currentTimeMillis() - sysStartTime) / 1000);
     } catch (Exception e) {// Catch exception if any
-      System.out.println("Exception Finish checking: " + uID + " size " + nbDroppedMessages + " / " + noOfSamples + " : "
-          + (nbDroppedMessages / noOfSamples));
+      System.out.println("Exception Finish checking: " + uID + " size " + nbDroppedMessages + " / "
+          + noOfSamples + " : " + (nbDroppedMessages / noOfSamples));
       System.out.println("rate:\t" + rate);
       System.out.println("put:\t" + nbPutMessages);
       System.out.println("drop:\t" + nbDroppedMessages);
       System.out.println("ratio:\t" + nbDroppedMessages / noOfSamples);
-      System.out.println("Runtime:\t" + (System.currentTimeMillis() - sysStartTime)/1000);
+      System.out.println("Runtime:\t" + (System.currentTimeMillis() - sysStartTime) / 1000);
       e.printStackTrace();
     }
   }
 
-
+  // to measure Cassandra replicating performance
   public void checkDatafromCassandraHectorPerSecond(int uID, int noOfReplicas, int minute,
-      String lcheckfile, int rate, int delayTime, String logFileName) { // to measure Cassandra
-                                                                        // replicating
-    // performance
+      String lcheckfile, int rate, int delayTime, String logFileName) { 
     Double sum = 0.0;
     int noOfSamples = minute * rate * 60;
     System.out.println("noOfSamples " + noOfSamples);
@@ -147,7 +135,6 @@ public class CheckData {
       // data to the backend
       BufferedReader br = new BufferedReader(new FileReader(logFileName));
       try {
-        StringBuilder sb = new StringBuilder();
         String line = br.readLine();
 
         while (line != null) {
@@ -157,7 +144,6 @@ public class CheckData {
 
           line = br.readLine();
         }
-        String everything = sb.toString();
       } finally {
         br.close();
       }
@@ -165,11 +151,8 @@ public class CheckData {
       String[] parsedStartTime = startTime.split("\\s+");
       System.out.println("Time client called server :" + parsedStartTime[0]);
       System.out.println("Time client called server :" + parsedStartTime[1]);
-      int startHour = Integer.parseInt(parsedStartTime[1].split(":")[0]);
       int startMinute = Integer.parseInt(parsedStartTime[1].split(":")[1]);
-      int startSecond = Integer.parseInt(parsedStartTime[1].split(":")[2]);
       String putTime;
-      int putHour = 0;
       int putMinute = 0;
       int putSecond = 0;
       String[] parsedPutTime;
@@ -186,7 +169,6 @@ public class CheckData {
       // putHour =
       // Integer.parseInt(parsedPutTime[1].split(":")[0]);
       int firstPutMinute = Integer.parseInt(parsedFirstPutTime[1].split(":")[1]);
-      int firstPutSecond = Integer.parseInt(parsedFirstPutTime[1].split(":")[2]);
       System.out.println("Time Casssandra saves data : " + parsedFirstPutTime[0]);
       System.out.println("Time Casssandra saves data : " + parsedFirstPutTime[1]);
 
@@ -216,7 +198,7 @@ public class CheckData {
                 new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(
                     dataColumns.get(columnIdx).getClock() / 1000));
             parsedPutTime = putTime.split("\\s+");
-             System.out.println(dataColumns.get(columnIdx).getValue() + " at " + parsedPutTime[1]);
+            System.out.println(dataColumns.get(columnIdx).getValue() + " at " + parsedPutTime[1]);
             // putHour =
             // Integer.parseInt(parsedPutTime[1].split(":")[0]);
             putMinute = Integer.parseInt(parsedPutTime[1].split(":")[1]);
@@ -335,9 +317,7 @@ public class CheckData {
       // data to the backend
       BufferedReader br = new BufferedReader(new FileReader(logFileName));
       try {
-        StringBuilder sb = new StringBuilder();
         String line = br.readLine();
-
         while (line != null) {
           if (line.contains("startTime")) {
             startTime = line.split("-")[1];
@@ -350,33 +330,7 @@ public class CheckData {
       String[] parsedStartTime = startTime.split("\\s+");
       System.out.println("Time client called server :" + parsedStartTime[0]);
       System.out.println("Time client called server :" + parsedStartTime[1]);
-      int startHour = Integer.parseInt(parsedStartTime[1].split(":")[0]);
-      int startMinute = Integer.parseInt(parsedStartTime[1].split(":")[1]);
-      int startSecond = Integer.parseInt(parsedStartTime[1].split(":")[2]);
-      String putTime;
-      int putHour = 0;
-      int putMinute = 0;
-      int putSecond = 0;
-      String[] parsedPutTime;
       ResultSet result0 = iGFCF.execute("Data", uID, 0, rate - 1, false, rate);
-      String firstPutTime = "";
-      String[] parsedFirstPutTime = firstPutTime.split("\\s+");
-      // System.out.println(parsedPutTime[1]);
-      // putHour =
-      // Integer.parseInt(parsedPutTime[1].split(":")[0]);
-      // int firstPutMinute = Integer.parseInt(parsedFirstPutTime[1]
-      // .split(":")[1]);
-      // int firstPutSecond = Integer.parseInt(parsedFirstPutTime[1]
-      // .split(":")[2]);
-      // System.out.println("Time Casssandra saves data : "
-      // + parsedFirstPutTime[0]);
-      // System.out.println("Time Casssandra saves data : "
-      // + parsedFirstPutTime[1]);
-
-      // if ((startMinute >= 54 && startMinute <= 59)
-      // && (firstPutMinute >= 54 && firstPutMinute <= 59)) {
-      // startMinute = startMinute - 60;
-      int s;
       while (tsID < noOfSamples - rate + 1) {
         result0 = iGFCF.execute("Data", uID, tsID, tsID + rate - 1, false, rate);
         tsID += rate;
@@ -445,7 +399,6 @@ public class CheckData {
       // data to the backend
       BufferedReader br = new BufferedReader(new FileReader(logFileName));
       try {
-        StringBuilder sb = new StringBuilder();
         String line = br.readLine();
 
         while (line != null) {
@@ -460,11 +413,9 @@ public class CheckData {
       String[] parsedStartTime = startTime.split("\\s+");
       System.out.println("Time client called server :" + parsedStartTime[0]);
       System.out.println("Time client called server :" + parsedStartTime[1]);
-      int startHour = Integer.parseInt(parsedStartTime[1].split(":")[0]);
       int startMinute = Integer.parseInt(parsedStartTime[1].split(":")[1]);
       int startSecond = Integer.parseInt(parsedStartTime[1].split(":")[2]);
       String putTime;
-      int putHour = 0;
       int putMinute = 0;
       int putSecond = 0;
       String[] parsedPutTime;
