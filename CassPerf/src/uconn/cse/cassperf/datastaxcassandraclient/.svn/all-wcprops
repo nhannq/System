@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/myprojects/!svn/ver/15/CassPerf/src/uconn/cse/cassperf/datastaxcassandraclient
+END
+GetRows.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/myprojects/!svn/ver/15/CassPerf/src/uconn/cse/cassperf/datastaxcassandraclient/GetRows.java
+END
+InsertRows.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/myprojects/!svn/ver/15/CassPerf/src/uconn/cse/cassperf/datastaxcassandraclient/InsertRows.java
+END
+GetDataFromDataCF.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/myprojects/!svn/ver/15/CassPerf/src/uconn/cse/cassperf/datastaxcassandraclient/GetDataFromDataCF.java
+END
+InsertRowsForDataCF.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/myprojects/!svn/ver/15/CassPerf/src/uconn/cse/cassperf/datastaxcassandraclient/InsertRowsForDataCF.java
+END
